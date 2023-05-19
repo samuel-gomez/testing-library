@@ -4,8 +4,11 @@ import {reportError} from './api'
 class ErrorBoundary extends React.Component {
   state = {hasError: false}
 
+  static getDerivedStateFromError() {
+    return {hasError: true}
+  }
+
   componentDidCatch(error, info) {
-    this.setState({hasError: true})
     reportError(error, info)
   }
 
