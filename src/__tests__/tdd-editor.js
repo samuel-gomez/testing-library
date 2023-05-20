@@ -47,7 +47,7 @@ test('Renders a form with title, content, tags, and a submit button', async () =
   expect(screen.getByText(fakePost.tags)).toBeInTheDocument()
   expect(screen.getByText(fakePost.id)).toBeInTheDocument()
   expect(screen.getByText(fakeUser.userId)).toBeInTheDocument()
-  // expect(screen.getByText(fakeUser.creationDate)).toBeInTheDocument()
+  // expect(screen.getByText(fakePost.creationDate)).toBeInTheDocument()
   const resultDate = screen.getByTestId('date-creation').textContent
   const resultTimeStamp = new Date(resultDate).valueOf()
 
