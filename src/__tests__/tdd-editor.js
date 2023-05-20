@@ -26,14 +26,22 @@ const fakeUser = {
 }
 const useIdMock = jest.fn().mockReturnValueOnce(fakePost.id)
 
-test('Renders a form with title, content, tags, and a submit button', async () => {
+const renderEditor = () => {
   render(<Editor {...fakeUser} useId={useIdMock} date={creationDate} />)
-
-  screen.getByLabelText(/title/i).value = fakePost.title
   screen.getByLabelText(/content/i).value = fakePost.content
   screen.getByLabelText(/tags/i).value = fakePost.tags
 
   const submitButton = screen.getByText(/submit/i)
+
+  return {
+    submitButton,
+  }
+}
+
+test('Renders a form with title, content, tags, and a submit button and redirect', async () => {
+  const {submitButton} = renderEditor()
+  screen.getByLabelText(/title/i).value = fakePost.title
+
   user.click(submitButton)
   expect(submitButton).toBeDisabled()
 
@@ -45,7 +53,6 @@ test('Renders a form with title, content, tags, and a submit button', async () =
   expect(screen.getByText(fakePost.tags)).toBeInTheDocument()
   expect(screen.getByText(fakePost.id)).toBeInTheDocument()
   expect(screen.getByText(fakeUser.userId)).toBeInTheDocument()
-
   expect(screen.getByText(creationDate.toISOString())).toBeInTheDocument()
 
   await waitFor(() => {
@@ -53,14 +60,9 @@ test('Renders a form with title, content, tags, and a submit button', async () =
   })
 })
 
-test('Renders a error message from the server', async () => {
-  render(<Editor {...fakeUser} useId={useIdMock} date={creationDate} />)
-
+test('Renders a error message from the server when title is empty', async () => {
+  const {submitButton} = renderEditor()
   screen.getByLabelText(/title/i).value = ''
-  screen.getByLabelText(/content/i).value = fakePost.content
-  screen.getByLabelText(/tags/i).value = fakePost.tags
-
-  const submitButton = screen.getByText(/submit/i)
   user.click(submitButton)
 
   const postError = await screen.findByRole('alert')
