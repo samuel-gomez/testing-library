@@ -1,9 +1,12 @@
 import * as React from 'react'
+import {Redirect} from 'react-router'
 import {savePost} from './api'
 
 const Editor = ({userId, useId = React.useId}) => {
   const [isSaving, setIsSaving] = React.useState(false)
   const [result, setResult] = React.useState(null)
+  const [redirect, setRedirect] = React.useState(false)
+
   const id = useId()
 
   const handleSubmit = async (e) => {
@@ -18,6 +21,13 @@ const Editor = ({userId, useId = React.useId}) => {
       userId,
     })
     setResult({...data})
+    setTimeout(() => {
+      setRedirect(true)
+    }, 50)
+  }
+
+  if (redirect) {
+    return <Redirect to="/" />
   }
 
   return (

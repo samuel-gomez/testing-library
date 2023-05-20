@@ -1,7 +1,18 @@
 import React from 'react'
 import {render, screen, waitFor} from '@testing-library/react'
 import user from '@testing-library/user-event'
+import {Redirect as MockRedirect} from 'react-router'
 import {Editor} from '../tdd-editor'
+
+jest.mock('react-router', () => {
+  return {
+    Redirect: jest.fn(() => null),
+  }
+})
+
+afterEach(() => {
+  jest.clearAllMocks()
+})
 
 test('Renders a form with title, content, tags, and a submit button', async () => {
   const fakePost = {
@@ -33,4 +44,8 @@ test('Renders a form with title, content, tags, and a submit button', async () =
   expect(screen.getByText(fakePost.tags)).toBeInTheDocument()
   expect(screen.getByText(fakePost.id)).toBeInTheDocument()
   expect(screen.getByText(fakeUser.userId)).toBeInTheDocument()
+
+  await waitFor(() => {
+    expect(MockRedirect).toHaveBeenCalledWith({to: '/'}, {})
+  })
 })
