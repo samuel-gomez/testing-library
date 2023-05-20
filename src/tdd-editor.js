@@ -19,6 +19,7 @@ const Editor = ({userId, useId = React.useId}) => {
       content: content.value,
       tags: tags.value,
       userId,
+      dateCreation: new Date().toISOString(),
     })
     setResult({...data})
     setTimeout(() => {
@@ -50,6 +51,7 @@ const Editor = ({userId, useId = React.useId}) => {
           <p>{result?.tags}</p>
           <p>{result?.id}</p>
           <p>{result?.userId}</p>
+          <p data-testid="date-creation">{result?.dateCreation}</p>
         </div>
       )}
     </>
