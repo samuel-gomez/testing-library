@@ -6,6 +6,7 @@ const Editor = ({userId, useId = React.useId, date = new Date()}) => {
   const [isSaving, setIsSaving] = React.useState(false)
   const [result, setResult] = React.useState(null)
   const [redirect, setRedirect] = React.useState(false)
+  const [errorMessage, setErrorMessage] = React.useState(null)
 
   const id = useId()
 
@@ -13,18 +14,23 @@ const Editor = ({userId, useId = React.useId, date = new Date()}) => {
     e.preventDefault()
     const {title, content, tags} = e.target.elements
     setIsSaving(true)
-    const {data} = await savePost({
-      id,
-      title: title.value,
-      content: content.value,
-      tags: tags.value,
-      userId,
-      creationdate: date.toISOString(),
-    })
-    setResult({...data})
-    setTimeout(() => {
-      setRedirect(true)
-    }, 50)
+    try {
+      const {data} = await savePost({
+        id,
+        title: title.value,
+        content: content.value,
+        tags: tags.value,
+        userId,
+        creationdate: date.toISOString(),
+      })
+      setResult({...data})
+      setTimeout(() => {
+        setRedirect(true)
+      }, 50)
+    } catch (error) {
+      setErrorMessage(error.errorMessage)
+      setIsSaving(false)
+    }
   }
 
   if (redirect) {
@@ -33,6 +39,7 @@ const Editor = ({userId, useId = React.useId, date = new Date()}) => {
 
   return (
     <>
+      {errorMessage && <div role="alert">{errorMessage}</div>}
       <form onSubmit={handleSubmit}>
         <label htmlFor="title-input">Title</label>
         <input id="title-input" name="title" />

@@ -14,19 +14,19 @@ afterEach(() => {
   jest.clearAllMocks()
 })
 
-test('Renders a form with title, content, tags, and a submit button', async () => {
-  const creationDate = new Date()
-  const fakePost = {
-    title: 'Test title',
-    content: 'Test content',
-    tags: 'tag1, tag2',
-    id: '123456',
-  }
-  const fakeUser = {
-    userId: 'Test user id',
-  }
-  const useIdMock = jest.fn().mockReturnValueOnce(fakePost.id)
+const creationDate = new Date()
+const fakePost = {
+  title: 'Test title',
+  content: 'Test content',
+  tags: 'tag1, tag2',
+  id: '123456',
+}
+const fakeUser = {
+  userId: 'Test user id',
+}
+const useIdMock = jest.fn().mockReturnValueOnce(fakePost.id)
 
+test('Renders a form with title, content, tags, and a submit button', async () => {
   render(<Editor {...fakeUser} useId={useIdMock} date={creationDate} />)
 
   screen.getByLabelText(/title/i).value = fakePost.title
@@ -51,4 +51,21 @@ test('Renders a form with title, content, tags, and a submit button', async () =
   await waitFor(() => {
     expect(MockRedirect).toHaveBeenCalledWith({to: '/'}, {})
   })
+})
+
+test('Renders a error message from the server', async () => {
+  render(<Editor {...fakeUser} useId={useIdMock} date={creationDate} />)
+
+  screen.getByLabelText(/title/i).value = ''
+  screen.getByLabelText(/content/i).value = fakePost.content
+  screen.getByLabelText(/tags/i).value = fakePost.tags
+
+  const submitButton = screen.getByText(/submit/i)
+  user.click(submitButton)
+
+  const postError = await screen.findByRole('alert')
+  expect(postError).toHaveTextContent(
+    /Format invalide, veuillez renseigner le titre/i,
+  )
+  expect(submitButton).toBeEnabled()
 })
