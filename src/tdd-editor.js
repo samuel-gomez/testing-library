@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Redirect} from 'react-router'
 import {savePost} from './api'
 
-const Editor = ({userId, useId = React.useId}) => {
+const Editor = ({userId, useId = React.useId, date = new Date()}) => {
   const [isSaving, setIsSaving] = React.useState(false)
   const [result, setResult] = React.useState(null)
   const [redirect, setRedirect] = React.useState(false)
@@ -19,7 +19,7 @@ const Editor = ({userId, useId = React.useId}) => {
       content: content.value,
       tags: tags.value,
       userId,
-      dateCreation: new Date().toISOString(),
+      creationdate: date.toISOString(),
     })
     setResult({...data})
     setTimeout(() => {
@@ -51,7 +51,7 @@ const Editor = ({userId, useId = React.useId}) => {
           <p>{result?.tags}</p>
           <p>{result?.id}</p>
           <p>{result?.userId}</p>
-          <p data-testid="date-creation">{result?.dateCreation}</p>
+          <p>{result?.creationdate}</p>
         </div>
       )}
     </>

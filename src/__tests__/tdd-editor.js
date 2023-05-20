@@ -15,20 +15,19 @@ afterEach(() => {
 })
 
 test('Renders a form with title, content, tags, and a submit button', async () => {
-  const preDate = new Date()
+  const creationDate = new Date()
   const fakePost = {
     title: 'Test title',
     content: 'Test content',
     tags: 'tag1, tag2',
     id: '123456',
-    creationDate: preDate.toISOString(),
   }
   const fakeUser = {
     userId: 'Test user id',
   }
   const useIdMock = jest.fn().mockReturnValueOnce(fakePost.id)
 
-  render(<Editor {...fakeUser} useId={useIdMock} />)
+  render(<Editor {...fakeUser} useId={useIdMock} date={creationDate} />)
 
   screen.getByLabelText(/title/i).value = fakePost.title
   screen.getByLabelText(/content/i).value = fakePost.content
@@ -41,18 +40,13 @@ test('Renders a form with title, content, tags, and a submit button', async () =
   await waitFor(() => {
     expect(screen.getByText(fakePost.title)).toBeInTheDocument()
   })
-  const postDate = new Date()
 
   expect(screen.getByText(fakePost.content)).toBeInTheDocument()
   expect(screen.getByText(fakePost.tags)).toBeInTheDocument()
   expect(screen.getByText(fakePost.id)).toBeInTheDocument()
   expect(screen.getByText(fakeUser.userId)).toBeInTheDocument()
-  // expect(screen.getByText(fakePost.creationDate)).toBeInTheDocument()
-  const resultDate = screen.getByTestId('date-creation').textContent
-  const resultTimeStamp = new Date(resultDate).valueOf()
 
-  expect(resultTimeStamp).toBeGreaterThanOrEqual(preDate.valueOf())
-  expect(resultTimeStamp).toBeLessThanOrEqual(postDate.valueOf())
+  expect(screen.getByText(creationDate.toISOString())).toBeInTheDocument()
 
   await waitFor(() => {
     expect(MockRedirect).toHaveBeenCalledWith({to: '/'}, {})
