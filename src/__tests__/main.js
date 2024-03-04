@@ -22,3 +22,14 @@ test('landing on a bad page shows no match component', () => {
   render(<Main />, {route: '/something-that-does-not-match'})
   expect(screen.getByRole('heading')).toHaveTextContent(/404/i)
 })
+
+test('Utilisateur est sur la page Home', () => {
+  window.history.pushState({}, 'Home', '/')
+  render(<Main />)
+  expect(screen.getByRole('heading')).toHaveTextContent(/home/i)
+})
+
+test('Utilisateur nest pas sur la page home', () => {
+  render(<Main />, {route: '/something-that-does-not-match'})
+  expect(screen.getByRole('heading')).not.toHaveTextContent(/home/i)
+})
